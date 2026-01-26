@@ -133,7 +133,7 @@ app.get("/privacy-policy", (_, res: Response) => {
         
         <h2>Contact</h2>
         <p>For questions about this privacy policy or our data practices, contact us at:</p>
-        <p><strong>Email:</strong> your-email@example.com</p>
+        <p><strong>Email:</strong> osiptsev.valik@gmail.com</p>
         
         <h2>Consent</h2>
         <p>By using Christian Perspective Assistant, you consent to this privacy policy.</p>
