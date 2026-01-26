@@ -26,7 +26,7 @@ app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use("/api/", rateLimiter);
 
 // Request logging
-app.use((req: Request, res: Response, next: NextFunction) => {
+app.use((req: Request, _res: Response, next: NextFunction) => {
   console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
   next();
 });
@@ -35,7 +35,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 app.use("/api", analyzeRoutes);
 
 // Root endpoint
-app.get("/", (req: Request, res: Response) => {
+app.get("/", (_req: Request, res: Response) => {
   res.json({
     name: "What Would Jesus Say API",
     version: "1.0.0",
@@ -55,7 +55,7 @@ app.use((req: Request, res: Response) => {
 });
 
 // Error handler
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
   console.error("Unhandled error:", err);
   res.status(500).json({
     error: "Internal Server Error",

@@ -1,6 +1,7 @@
 import { Request, Response, Router } from "express";
 import { AIService } from "../services/ai.service";
 import { AnalyzeRequest, ErrorResponse } from "../types";
+import { detectLanguage, SupportedLanguage } from "../utils/i18n";
 
 const router = Router();
 let aiService: AIService;
@@ -13,21 +14,27 @@ function getAIService(): AIService {
   return aiService;
 }
 
-router.post("/analyze", async (req: Request, res: Response) => {
+router.post("/analyze", async (req: Request, res: Response): Promise<void> => {
   try {
     const { pageData } = req.body as AnalyzeRequest;
+    const language: SupportedLanguage = detectLanguage(
+      req.headers["accept-language"],
+    );
+    console.log("language", language);
 
     // Validation
     if (!pageData) {
-      return res.status(400).json({
+      res.status(400).json({
         error: "Missing pageData in request body",
       } as ErrorResponse);
+      return;
     }
 
     if (!pageData.url || !pageData.title) {
-      return res.status(400).json({
+      res.status(400).json({
         error: "pageData must include url and title",
       } as ErrorResponse);
+      return;
     }
 
     // Sanitize input
