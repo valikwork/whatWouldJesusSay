@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "What Would Jesus Say",
-  "version": "1.0",
-  "description": "Have you ever wondered 'What Jesus would say about my browsing history?'. Well, wait no longer. This extension will provide Jesus's point of view on whatever crap you're looking right now. Just ask, and He will answer.",
+  "version": "1.0.0",
+  "description": "Have you ever wondered 'What Jesus would say about my browsing history?'. Well, wait no longer. Just ask, and He will answer.",
   "permissions": [
     "activeTab",
     "scripting",

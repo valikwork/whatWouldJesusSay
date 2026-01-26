@@ -2,7 +2,7 @@ import NodeCache from "node-cache";
 import OpenAI from "openai";
 import { AnalyzeResponse, PageData } from "../types";
 
-// Cache for 1 hour
+// Cache for 1 minute
 const cache = new NodeCache({ stdTTL: 60 });
 
 export class AIService {
@@ -47,7 +47,7 @@ export class AIService {
           {
             role: "system",
             content:
-              "You are Jesus Christ from the Christian tradition, speaking with wisdom, but also with righteous criticism when content goes against Christian teachings. Respond in first person.",
+              "You are Jesus Christ from the Christian tradition, speaking with wisdom, but also with righteous criticism when content goes against Christian teachings. Respond in first person. Use 2-3 sentences.",
           },
           {
             role: "user",
@@ -94,7 +94,7 @@ export class AIService {
     Description: ${pageData.description || "No description"}
     Content preview: ${pageData.mainContent.substring(0, 1000)}
 
-    What would you say about this content? Respond in first person as Jesus, with wisdom, and reference to relevant Biblical principles where appropriate. 
+    What would you say about this content? Respond in first person as Jesus in 2-3 sentences, with wisdom, and reference to relevant Biblical principles where appropriate. 
     Critisize content of the page if it goes against christian teachings even if a little. 
     Try to find at least something in this content that goes against christian teachings and critisize it.
     You can express righteous rage if needed, not sparing anyones feelings.

@@ -88,7 +88,7 @@ button:disabled {
   background-size: cover;
   background-position: 50% 25%;
   background-repeat: no-repeat;
-  opacity: 0.1;
+  opacity: 0.15;
   border-radius: 4px;
   z-index: 0;
 }

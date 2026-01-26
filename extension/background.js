@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3002/api'; // TODO Змінити на production URL після deploy
+const API_URL = 'https://wwjs-production.up.railway.app/api'; // Production URL
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'analyzeWithAI') {
