@@ -5,8 +5,7 @@
   "description": "Have you ever wondered 'What Jesus would say about my browsing history?'. Well, wait no longer. Just ask, and He will answer.",
   "permissions": [
     "activeTab",
-    "scripting",
-    "storage"
+    "scripting"
   ],
   "host_permissions": [
     "<all_urls>"
