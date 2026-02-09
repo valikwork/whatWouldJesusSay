@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "What Would Jesus Say",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Have you ever wondered 'What Jesus would say about my browsing history?'. Well, wait no longer. Just ask, and He will answer.",
   "permissions": [
     "activeTab",
