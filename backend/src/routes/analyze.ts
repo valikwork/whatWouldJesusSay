@@ -16,11 +16,12 @@ function getAIService(): AIService {
 
 router.post("/analyze", async (req: Request, res: Response): Promise<void> => {
   try {
-    const { pageData } = req.body as AnalyzeRequest;
-    const language: SupportedLanguage = detectLanguage(
-      req.headers["accept-language"],
-    );
-    console.log("language", language);
+    const { pageData, language: reqLanguage } = req.body as AnalyzeRequest;
+    // Use language from request body if provided, otherwise detect from headers, default to English
+    const language: SupportedLanguage =
+      (reqLanguage as SupportedLanguage) ||
+      detectLanguage(req.headers["accept-language"]) ||
+      "en";
 
     // Validation
     if (!pageData) {
@@ -56,7 +57,7 @@ router.post("/analyze", async (req: Request, res: Response): Promise<void> => {
     console.log(`Analyzing page: ${sanitizedPageData.title}`);
 
     // Get AI response
-    const response = await getAIService().analyze(sanitizedPageData);
+    const response = await getAIService().analyze(sanitizedPageData, language);
 
     res.json(response);
   } catch (error) {

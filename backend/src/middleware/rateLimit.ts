@@ -7,7 +7,7 @@ export const rateLimiter = rateLimit({
   windowMs,
   max: maxRequests,
   message: {
-    error: "Too many requests from this IP, please try again later.",
+    error: `Too many requests from this IP, please try again in ${Math.ceil(windowMs / 1000 / 60)} minutes.`,
     retryAfter: Math.ceil(windowMs / 1000 / 60) + " minutes",
   },
   standardHeaders: true,

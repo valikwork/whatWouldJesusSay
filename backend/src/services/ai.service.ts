@@ -1,6 +1,7 @@
 import NodeCache from "node-cache";
 import OpenAI from "openai";
 import { AnalyzeResponse, PageData } from "../types";
+import { SupportedLanguage, SYSTEM_PROMPTS, USER_PROMPTS } from "../utils/i18n";
 
 // Cache for 1 minute
 const cache = new NodeCache({ stdTTL: 60 });
@@ -21,9 +22,12 @@ export class AIService {
     this.model = process.env.OPENAI_MODEL || "gpt-4o-mini";
   }
 
-  async analyze(pageData: PageData): Promise<AnalyzeResponse> {
-    // Generate cache key from URL and title
-    const cacheKey = this.generateCacheKey(pageData);
+  async analyze(
+    pageData: PageData,
+    language: SupportedLanguage = "en",
+  ): Promise<AnalyzeResponse> {
+    // cache key from URL, title, and language
+    const cacheKey = this.generateCacheKey(pageData, language);
 
     // Check cache
     const cached = cache.get<string>(cacheKey);
@@ -37,7 +41,8 @@ export class AIService {
     }
 
     // Build prompt
-    const prompt = this.buildPrompt(pageData);
+    const userPrompt = this.buildPrompt(pageData, language);
+    const systemPrompt = this.buildSystemPrompt(language);
 
     try {
       // Call OpenAI API
@@ -46,12 +51,11 @@ export class AIService {
         messages: [
           {
             role: "system",
-            content:
-              "You are Jesus Christ from the Christian tradition, speaking with wisdom, but also with righteous criticism when content goes against Christian teachings. Respond in first person. Use 2-3 sentences.",
+            content: systemPrompt,
           },
           {
             role: "user",
-            content: prompt,
+            content: userPrompt,
           },
         ],
         max_tokens: 300,
@@ -82,29 +86,46 @@ export class AIService {
     }
   }
 
-  private buildPrompt(pageData: PageData): string {
+  private buildSystemPrompt(language: SupportedLanguage): string {
+    const basePrompt = SYSTEM_PROMPTS[language] || SYSTEM_PROMPTS.en;
+
+    // Add language-specific instruction
+    if (language === "uk") {
+      return basePrompt + "\n\nВідповідайте ОБОВ'ЯЗКОВО українською мовою.";
+    }
+
+    return basePrompt + "\n\nRespond in 2-3 sentences.";
+  }
+
+  private buildPrompt(
+    pageData: PageData,
+    language: SupportedLanguage = "en",
+  ): string {
+    if (language === "uk") {
+      return `
+        Веб-сайт: ${pageData.title}
+        URL: ${pageData.url}
+        Опис: ${pageData.description || "Немає опису"}
+        Попередній перегляд контенту: ${pageData.mainContent.substring(0, 1000)}
+        ${USER_PROMPTS.uk}
+    `;
+    }
+
     return `
-    You are responding as Jesus Christ from the Christian tradition. Based on the teachings in the Gospels and Christian scripture, provide a brief response (2-3 sentences) about this webpage content.
-    Critisize content of the page if it goes against christian teachings even if a little. Try to find at least something in this content that goes against christian teachings and critisize it.
-    You can express righteous rage if needed, not sparing anyones feelings.
-    Emphasize the role of devil in temptation and sin of the content you provided.
-
-    Website: ${pageData.title}
-    URL: ${pageData.url}
-    Description: ${pageData.description || "No description"}
-    Content preview: ${pageData.mainContent.substring(0, 1000)}
-
-    What would you say about this content? Respond in first person as Jesus in 2-3 sentences, with wisdom, and reference to relevant Biblical principles where appropriate. 
-    Critisize content of the page if it goes against christian teachings even if a little. 
-    Try to find at least something in this content that goes against christian teachings and critisize it.
-    You can express righteous rage if needed, not sparing anyones feelings.
-    Emphasize the role of devil in temptation and sin of the content you provided.
+      Website: ${pageData.title}
+      URL: ${pageData.url}
+      Description: ${pageData.description || "No description"}
+      Content preview: ${pageData.mainContent.substring(0, 1000)}
+      ${USER_PROMPTS.en}
     `;
   }
 
-  private generateCacheKey(pageData: PageData): string {
-    // Create a simple cache key from URL
-    return `analysis:${pageData.url}`.substring(0, 200);
+  private generateCacheKey(
+    pageData: PageData,
+    language: SupportedLanguage = "en",
+  ): string {
+    // Create a simple cache key from URL and language
+    return `analysis:${language}:${pageData.url}`.substring(0, 200);
   }
 
   // Method to clear cache (useful for admin endpoints)

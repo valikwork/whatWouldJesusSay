@@ -48,10 +48,20 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 });
 
+// Detect and apply language on load
+let userLanguage = 'en';
+
+document.addEventListener('DOMContentLoaded', () => {
+  userLanguage = detectLanguage();
+  applyTranslations(userLanguage);
+});
+
 document.getElementById('analyzeBtn').addEventListener('click', async () => {
+  const analyzeBtn = document.getElementById('analyzeBtn');
   const loading = document.getElementById('loading');
   const response = document.getElementById('response');
   const error = document.getElementById('error');
+  analyzeBtn.disabled = true;
   
   // Reset UI
   loading.classList.remove('hidden');
@@ -98,9 +108,10 @@ document.getElementById('analyzeBtn').addEventListener('click', async () => {
 
     // Send to background script for AI processing
     chrome.runtime.sendMessage(
-      { action: 'analyzeWithAI', data: pageData },
+      { action: 'analyzeWithAI', data: pageData, language: userLanguage },
       (aiResponse) => {
         loading.classList.add('hidden');
+        analyzeBtn.disabled = false;
         
         // Check for chrome runtime errors
         if (chrome.runtime.lastError) {
@@ -129,6 +140,7 @@ document.getElementById('analyzeBtn').addEventListener('click', async () => {
   } catch (err) {
     console.error('Caught error:', err);
     loading.classList.add('hidden');
+    analyzeBtn.disabled = false; // Re-enable button on error
     error.textContent = 'Failed to analyze page: ' + err.message;
     error.classList.remove('hidden');
   }

@@ -11,6 +11,7 @@ export interface PageData {
 
 export interface AnalyzeRequest {
   pageData: PageData;
+  language?: string;
 }
 
 export interface AnalyzeResponse {

@@ -4,7 +4,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'analyzeWithAI') {
     console.log('Background: Received request with data:', request.data);
     
-    analyzeWithBackend(request.data)
+    analyzeWithBackend(request.data, request.language || 'en')
       .then(response => {
         console.log('Background: AI response success:', response);
         sendResponse(response);
@@ -90,7 +90,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 //   }
 // }
 
-async function analyzeWithBackend(pageData) {
+async function analyzeWithBackend(pageData, language) {
   try {
     console.log('Background: Making API call to backend...');
 
@@ -106,6 +106,7 @@ async function analyzeWithBackend(pageData) {
           description: pageData.description || '',
           mainContent: pageData.mainContent || '',
         },
+        language: language,
       }),
     });
 
