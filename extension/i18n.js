@@ -8,6 +8,16 @@ const translations = {
     title: "✝️ Що б сказав Ісус?",
     analyzeButton: "Проаналізувати цю сторінку 🙏",
     loading: "Роздумую...",
+  },
+  pt: {
+    title: "✝️ O Que Jesus Diria?",
+    analyzeButton: "Analisar Esta Página 🙏",
+    loading: "Contemplando...",
+  },
+  es: {
+    title: "✝️ ¿Qué Diría Jesús?",
+    analyzeButton: "Analizar Esta Página 🙏",
+    loading: "Contemplando...",
   }
 };
 
@@ -22,6 +32,12 @@ function detectLanguage() {
   }
   if (langCode === 'uk') {
     return 'uk';
+  }
+  if (langCode === 'pt') {
+    return 'pt';
+  }
+  if (langCode === 'es') {
+    return 'es';
   }
   return 'en';
 }

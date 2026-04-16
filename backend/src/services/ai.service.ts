@@ -89,34 +89,36 @@ export class AIService {
   private buildSystemPrompt(language: SupportedLanguage): string {
     const basePrompt = SYSTEM_PROMPTS[language] || SYSTEM_PROMPTS.en;
 
-    // Add language-specific instruction
-    if (language === "uk") {
-      return basePrompt + "\n\nВідповідайте ОБОВ'ЯЗКОВО українською мовою.";
-    }
+    const languageSuffix: Record<SupportedLanguage, string> = {
+      en: "\n\nRespond in 2-3 sentences.",
+      uk: "\n\nВідповідайте ОБОВ'ЯЗКОВО українською мовою.",
+      pt: "\n\nResponda OBRIGATORIAMENTE em português.",
+      es: "\n\nResponde OBLIGATORIAMENTE en español.",
+    };
 
-    return basePrompt + "\n\nRespond in 2-3 sentences.";
+    return basePrompt + (languageSuffix[language] || languageSuffix.en);
   }
 
   private buildPrompt(
     pageData: PageData,
     language: SupportedLanguage = "en",
   ): string {
-    if (language === "uk") {
-      return `
-        Веб-сайт: ${pageData.title}
-        URL: ${pageData.url}
-        Опис: ${pageData.description || "Немає опису"}
-        Попередній перегляд контенту: ${pageData.mainContent.substring(0, 1000)}
-        ${USER_PROMPTS.uk}
-    `;
-    }
+    const labels: Record<SupportedLanguage, { website: string; description: string; noDescription: string; contentPreview: string }> = {
+      en: { website: "Website", description: "Description", noDescription: "No description", contentPreview: "Content preview" },
+      uk: { website: "Веб-сайт", description: "Опис", noDescription: "Немає опису", contentPreview: "Попередній перегляд контенту" },
+      pt: { website: "Site", description: "Descrição", noDescription: "Sem descrição", contentPreview: "Pré-visualização do conteúdo" },
+      es: { website: "Sitio web", description: "Descripción", noDescription: "Sin descripción", contentPreview: "Vista previa del contenido" },
+    };
+
+    const l = labels[language] || labels.en;
+    const userPrompt = USER_PROMPTS[language] || USER_PROMPTS.en;
 
     return `
-      Website: ${pageData.title}
+      ${l.website}: ${pageData.title}
       URL: ${pageData.url}
-      Description: ${pageData.description || "No description"}
-      Content preview: ${pageData.mainContent.substring(0, 1000)}
-      ${USER_PROMPTS.en}
+      ${l.description}: ${pageData.description || l.noDescription}
+      ${l.contentPreview}: ${pageData.mainContent.substring(0, 1000)}
+      ${userPrompt}
     `;
   }
 
